@@ -3,24 +3,21 @@
 module JPCalendar
   require 'date'
 
-  module DateEx
-    refine Date do
-      def monday(w)
-        self + 7 * w.to_i - ((self - 1).wday + 6) % 7 - 1
-      end
+  class JPDate < Date
+    def monday(w)
+      self + 7 * w.to_i - ((self - 1).wday + 6) % 7 - 1
+    end
 
-      def spring_day
-        dy = self.year - 1900
-        Date.new(self.year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
-      end
+    def spring_day
+      dy = self.year - 1900
+      Date.new(self.year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
+    end
 
-      def autumn_day
-        dy = self.year - 1900
-        Date.new(self.year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
-      end
+    def autumn_day
+      dy = self.year - 1900
+      Date.new(self.year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
     end
   end
-  using DateEx
 
   class JPHoliday
     HOLIDAYS = [
@@ -59,8 +56,7 @@ module JPCalendar
         when Fixnum
           {date: Date.new(y, h[:month], h[:day])}.merge(h)
         when String
-          method, argument = *h[:day].split
-          eval("{date:Date.new(y, h[:month]).#{method}(#{argument})}.merge(h)")
+          {date: JPDate.new(y, h[:month]).send(*h[:day].split)}.merge(h)
         end
       end
 
@@ -97,7 +93,7 @@ module JPCalendar
       end
     end
   end # class JPHoliday
-end
+end # module JPCalendar
 
 include JPCalendar
 
