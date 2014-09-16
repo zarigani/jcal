@@ -1,3 +1,5 @@
+#!/usr/bin/ruby -W0
+
 HOLIDAYS = [
   {month:4,  day:10,          term:1959..1959, name:'結婚の儀'},
   {month:2,  day:24,          term:1989..1989, name:'大喪の礼'},
