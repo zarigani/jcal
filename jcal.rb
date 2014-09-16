@@ -188,5 +188,90 @@ module Jcal
   end
 end # module Jcal
 
-Jcal::matrix(2014, 9)
-Jcal::list(2014, 5)
+require 'optparse'
+
+# オプション解析
+options = {}
+OptionParser.new do |opt|
+  opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm]'
+  opt.separator('')
+  opt.on('-y[NUM]', 'List NUM years.(0-10)', Integer) {|v| options[:years] = v}
+  opt.on('-m[NUM]', 'Show NUM months.(0-12)', Integer) {|v| options[:months] = v}
+  opt.separator('')
+  opt.on('Example:',
+         '    jcal                           # Show monthly calendar of this month.',
+         '    jcal 8                         # Show monthly calendar of Aug.',
+         '    jcal 8 2                       # Show monthly calendar from Aug. to Feb. of next year.',
+         '    jcal 2010                      # Show all monthly calendar of 2010.',
+         '    jcal -y                        # Show all monthly calendar of this year.',
+         '    jcal -y5                       # List from this year to after 5 years.',
+         '    jcal 2011 2012                 # List from 2011 to 2012.',
+         '    jcal -m                        # Show monthly calendar from last month to next month.',
+         '    jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.',
+         )
+  begin
+    opt.parse!(ARGV)
+  rescue => e
+    puts e
+    exit
+  end
+end
+
+# ARGVから読み込み
+ARGV[0] && (ARGV[0].to_i > 12 ? y1 = ARGV[0].to_i : m1 = ARGV[0].to_i)
+ARGV[1] && (ARGV[1].to_i > 12 ? y2 = ARGV[1].to_i : m2 = ARGV[1].to_i)
+
+# '.'を今月に変換
+m1 == 0 && m1 = Date.today.month
+m2 == 0 && m2 = Date.today.month
+
+# nilの処理
+m1 ||= m2
+m1 ||= Date.today.month if ARGV.empty? || options.key?(:months)
+y1 ||= y2
+y1 ||= Date.today.year
+
+# mオプション引数なしの場合は、前月から翌月まで表示する準備
+if options.key?(:months) && options[:months].to_i == 0
+  m2 = m1 + 1
+  m1 -= 1
+  m1 <  1 && (m1 = 12 ; y1 -= 1)
+  m2 > 12 && (m2 =  1)
+end
+
+# mオプション引数ありの場合は、指定した月数分表示する準備
+if options.key?(:months) && options[:months].to_i > 0
+  m2 = m1 + options[:months].to_i - 1
+  m2 > 12 && m2 %= 12
+end
+
+# 西暦2つの場合は、リスト表示する準備
+if y1 && y2 && (y2 - y1) > 0
+  options[:years] ||= y2 - y1 + 1
+end
+
+# yオプションが西暦なら、西暦と解釈
+# yオプションの最大値は、10
+if options[:years].to_i >= 1900
+  y1 = options[:years]
+  options[:years] = 0
+elsif options[:years].to_i > 10
+  options[:years] = 10
+end
+
+# カレンダー出力
+case
+when options[:years].to_i > 0
+  Jcal::list(y1, options[:years])
+when m1 && !m2 && !options.key?(:years)
+  Jcal::matrix(y1, m1)
+when m1 &&  m2 && !options.key?(:years)
+  if m1 <= m2
+    (m1..m2).each {|i| Jcal::matrix(y1, i)}
+  else
+    (m1..12).each {|i| Jcal::matrix(y1, i)}
+    ( 1..m2).each {|i| Jcal::matrix(y1 + 1, i)}
+  end
+else
+  (1..12).each {|i| Jcal::matrix(y1, i)}
+end
