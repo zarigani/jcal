@@ -26,3 +26,17 @@ HOLIDAYS = [
   {month:11, day:23,          term:   0..9999, name:'勤労感謝の日'},
   {month:12, day:23,          term:1989..9999, name:'天皇誕生日'},
 ]
+
+require 'date'
+
+y = 2014
+enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
+  case h[:day]
+  when Fixnum
+    {date: Date.new(y, h[:month], h[:day])}.merge(h)
+  when String
+    h[:day]
+  end
+end
+
+enable_holidays.each {|i| p i}
