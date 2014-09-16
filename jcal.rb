@@ -51,13 +51,28 @@ end
 using DateEx
 
 y = 2014
+
+# 有効な祝日を取り出し、日付を追加する
 enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
   case h[:day]
   when Fixnum
     {date: Date.new(y, h[:month], h[:day])}.merge(h)
   when String
+    # {date: Date.new(y, h[:month]).send(*h[:day].split)}.merge(h)
     method, argument = *h[:day].split
     eval("{date:Date.new(y, h[:month]).#{method}(#{argument})}.merge(h)")
+  end
+end
+
+enable_dates = enable_holidays.map {|h| h[:date]}
+
+# 振替休日を判定
+enable_dates.each do |date|
+  if date.wday == 0
+    while enable_dates.include?(date)
+      date += 1
+    end
+    enable_holidays << {date:date, name:'振替休日'}
   end
 end
 
