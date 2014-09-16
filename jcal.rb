@@ -97,6 +97,32 @@ end # module JPCalendar
 
 include JPCalendar
 
+module StringEx
+  refine String do
+    def length_ja
+      half_lenght = count(" -~")
+      full_length = (length - half_lenght) * 2
+      half_lenght + full_length
+    end
+
+    def ljust_ja(width, padstr=' ')
+      n = [0, width - length_ja].max
+      self + padstr * n
+    end
+
+    def rjust_ja(width, padstr=' ')
+      n = [0, width - length_ja].max
+      padstr * n + self
+    end
+
+    def center_ja(width, padstr=' ')
+      n = [0, width - length_ja].max
+      padstr * (n/2) + self
+    end
+  end
+end
+using StringEx
+
 def matrix_cal(y, m)
   start_date = Date.new(y, m) - Date.new(y, m).wday
   end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
@@ -105,7 +131,7 @@ def matrix_cal(y, m)
   
   date_list.each_slice(7) do |week|
     week.each do |date|
-      print  holiday.lookup(date).last.rjust(14) rescue print ' ' * 14
+      print  holiday.lookup(date).last.rjust_ja(14) rescue print ' ' * 14
       printf "%2d", date.day
     end
     puts
