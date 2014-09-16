@@ -97,9 +97,19 @@ end # module JPCalendar
 
 include JPCalendar
 
-holiday = JPHoliday.new(2015)
-p holiday
-puts
-p holiday.lookup(2015, 1, 1)
-p holiday.lookup(Date.new(2015, 1, 1))
-p holiday.lookup('2015-1-1')
+def matrix_cal(y, m)
+  start_date = Date.new(y, m) - Date.new(y, m).wday
+  end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
+  date_list = start_date..end_date
+  holiday = JPHoliday.new(y)
+  
+  date_list.each_slice(7) do |week|
+    week.each do |date|
+      print  holiday.lookup(date).last.rjust(14) rescue print ' ' * 14
+      printf "%2d", date.day
+    end
+    puts
+  end
+end
+
+matrix_cal(2014, 9)
