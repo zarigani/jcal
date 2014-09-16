@@ -29,21 +29,24 @@ HOLIDAYS = [
 
 require 'date'
 
-class Date
-  def monday(w)
-    self + 7 * w.to_i - ((self - 1).wday + 6) % 7 - 1
-  end
+module DateEx
+  refine Date do
+    def monday(w)
+      self + 7 * w.to_i - ((self - 1).wday + 6) % 7 - 1
+    end
 
-  def spring_day
-    dy = self.year - 1900
-    Date.new(self.year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
-  end
+    def spring_day
+      dy = self.year - 1900
+      Date.new(self.year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
+    end
 
-  def autumn_day
-    dy = self.year - 1900
-    Date.new(self.year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
+    def autumn_day
+      dy = self.year - 1900
+      Date.new(self.year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
+    end
   end
 end
+using DateEx
 
 y = 2014
 enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
