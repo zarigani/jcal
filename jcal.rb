@@ -157,4 +157,32 @@ def matrix_cal(y, m)
   puts
 end
 
+def list_cal(y, col)
+  week_ja = %w(日 月 火 水 木 金 土)
+  date366 = (Date.new(2004, 1, 1)..Date.new(2004, 12, 31)).to_a
+  list366 = Array.new(366, '')
+  (y...y + col).each do |y|
+    holiday = JPHoliday.new(y)
+    date366.each_with_index do |date, i|
+      date = Date.new(y, date.month, date.day) rescue nil
+      today_marker = (date == Date.today) ? "\e[7m" : '' rescue ''
+      holiday_name = holiday.lookup(date).last.ljust_ja(12) rescue ' ' * 12
+      case
+      when date == nil
+        list366[i] += sprintf("\e[ 0m%s%s%s\e[0m",  ' ' * 10,            ' ' * 2, holiday_name)
+      when holiday.lookup(date)
+        list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+      when date.wday == 0
+        list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+      when date.wday == 6
+        list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+      else
+        list366[i] += sprintf("\e[ 0m%s%s%s\e[0; 0m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+      end
+    end
+  end
+  list366.each {|list| puts list}
+end
+
 matrix_cal(2014, 9)
+list_cal(2014, 5)
