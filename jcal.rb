@@ -54,7 +54,8 @@ enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
   when Fixnum
     {date: Date.new(y, h[:month], h[:day])}.merge(h)
   when String
-    {date: Date.new(y, h[:month]).send(*h[:day].split)}.merge(h)
+    method, argument = *h[:day].split
+    eval("{date:Date.new(y, h[:month]).#{method}(#{argument})}.merge(h)")
   end
 end
 
