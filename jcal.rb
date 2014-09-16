@@ -50,7 +50,7 @@ module DateEx
 end
 using DateEx
 
-y = 2014
+y = 2015
 
 # 有効な祝日を取り出し、日付を追加する
 enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
@@ -73,6 +73,13 @@ enable_dates.each do |date|
       date += 1
     end
     enable_holidays << {date:date, name:'振替休日'}
+  end
+end
+
+# 国民の休日を判定
+enable_dates.each_cons(2) do |a, b|
+  if b.day - a.day == 2 && (a + 1).wday != 0 && !enable_holidays.map {|h| h[:date]}.include?(a + 1)
+    enable_holidays << {date:a + 1, name:'国民の休日'}
   end
 end
 
