@@ -95,9 +95,7 @@ module JPCalendar
   end # class JPHoliday
 end # module JPCalendar
 
-include JPCalendar
-
-module StringEx
+module JcalEx
   refine String do
     def length_ja
       half_lenght = count(" -~")
@@ -121,68 +119,74 @@ module StringEx
     end
   end
 end
-using StringEx
+using JcalEx
 
-def matrix_cal(y, m)
-  start_date = Date.new(y, m) - Date.new(y, m).wday
-  end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
-  date_list = start_date..end_date
-  holiday = JPHoliday.new(y)
+module Jcal
+  include JPCalendar
 
-  puts sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
-  header = %w(日 月 火 水 木 金 土).map {|s| s.rjust_ja(16)}
-  header[0] = "\e[31m" + header[0] + "\e[0m"
-  header[6] = "\e[36m" + header[6] + "\e[0m"
-  print header.join, "\n"
+  module_function
 
-  date_list.each_slice(7) do |week|
-    week.each do |date|
-      today_marker = date == Date.today ? "\e[7m" : ''
-      holiday_name = holiday.lookup(date).last.rjust_ja(14) rescue ' ' * 14
-      case
-      when date.month != m
-        printf "\e[37m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-      when holiday.lookup(date)
-        printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-      when date.wday == 0
-        printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-      when date.wday == 6
-        printf "\e[36m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-      else
-        printf       "%s%s%2d\e[0m", holiday_name, today_marker, date.day
+  def matrix(y, m)
+    start_date = Date.new(y, m) - Date.new(y, m).wday
+    end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
+    date_list = start_date..end_date
+    holiday = JPHoliday.new(y)
+
+    puts sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
+    header = %w(日 月 火 水 木 金 土).map {|s| s.rjust_ja(16)}
+    header[0] = "\e[31m" + header[0] + "\e[0m"
+    header[6] = "\e[36m" + header[6] + "\e[0m"
+    print header.join, "\n"
+
+    date_list.each_slice(7) do |week|
+      week.each do |date|
+        today_marker = date == Date.today ? "\e[7m" : ''
+        holiday_name = holiday.lookup(date).last.rjust_ja(14) rescue ' ' * 14
+        case
+        when date.month != m
+          printf "\e[37m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+        when holiday.lookup(date)
+          printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+        when date.wday == 0
+          printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+        when date.wday == 6
+          printf "\e[36m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+        else
+          printf       "%s%s%2d\e[0m", holiday_name, today_marker, date.day
+        end
       end
+      puts
     end
     puts
   end
-  puts
-end
 
-def list_cal(y, col)
-  week_ja = %w(日 月 火 水 木 金 土)
-  date366 = (Date.new(2004, 1, 1)..Date.new(2004, 12, 31)).to_a
-  list366 = Array.new(366, '')
-  (y...y + col).each do |y|
-    holiday = JPHoliday.new(y)
-    date366.each_with_index do |date, i|
-      date = Date.new(y, date.month, date.day) rescue nil
-      today_marker = (date == Date.today) ? "\e[7m" : '' rescue ''
-      holiday_name = holiday.lookup(date).last.ljust_ja(12) rescue ' ' * 12
-      case
-      when date == nil
-        list366[i] += sprintf("\e[ 0m%s%s%s\e[0m",  ' ' * 10,            ' ' * 2, holiday_name)
-      when holiday.lookup(date)
-        list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
-      when date.wday == 0
-        list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
-      when date.wday == 6
-        list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
-      else
-        list366[i] += sprintf("\e[ 0m%s%s%s\e[0; 0m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+  def list(y, col)
+    week_ja = %w(日 月 火 水 木 金 土)
+    date366 = (Date.new(2004, 1, 1)..Date.new(2004, 12, 31)).to_a
+    list366 = Array.new(366, '')
+    (y...y + col).each do |y|
+      holiday = JPHoliday.new(y)
+      date366.each_with_index do |date, i|
+        date = Date.new(y, date.month, date.day) rescue nil
+        today_marker = (date == Date.today) ? "\e[7m" : '' rescue ''
+        holiday_name = holiday.lookup(date).last.ljust_ja(12) rescue ' ' * 12
+        case
+        when date == nil
+          list366[i] += sprintf("\e[ 0m%s%s%s\e[0m",  ' ' * 10,            ' ' * 2, holiday_name)
+        when holiday.lookup(date)
+          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+        when date.wday == 0
+          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+        when date.wday == 6
+          list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+        else
+          list366[i] += sprintf("\e[ 0m%s%s%s\e[0; 0m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+        end
       end
     end
+    list366.each {|list| puts list}
   end
-  list366.each {|list| puts list}
-end
+end # module Jcal
 
-matrix_cal(2014, 9)
-list_cal(2014, 5)
+Jcal::matrix(2014, 9)
+Jcal::list(2014, 5)
