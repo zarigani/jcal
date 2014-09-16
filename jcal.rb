@@ -128,7 +128,13 @@ def matrix_cal(y, m)
   end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
   date_list = start_date..end_date
   holiday = JPHoliday.new(y)
-  
+
+  puts sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
+  header = %w(日 月 火 水 木 金 土).map {|s| s.rjust_ja(16)}
+  header[0] = "\e[31m" + header[0] + "\e[0m"
+  header[6] = "\e[36m" + header[6] + "\e[0m"
+  print header.join, "\n"
+
   date_list.each_slice(7) do |week|
     week.each do |date|
       today_marker = date == Date.today ? "\e[7m" : ''
