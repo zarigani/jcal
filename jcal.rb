@@ -83,4 +83,6 @@ enable_dates.each_cons(2) do |a, b|
   end
 end
 
-enable_holidays.each {|i| p i}
+@holidays_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
+
+@holidays_database.each {|i| p i}
