@@ -131,11 +131,24 @@ def matrix_cal(y, m)
   
   date_list.each_slice(7) do |week|
     week.each do |date|
-      print  holiday.lookup(date).last.rjust_ja(14) rescue print ' ' * 14
-      printf "%2d", date.day
+      today_marker = date == Date.today ? "\e[7m" : ''
+      holiday_name = holiday.lookup(date).last.rjust_ja(14) rescue ' ' * 14
+      case
+      when date.month != m
+        printf "\e[37m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+      when holiday.lookup(date)
+        printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+      when date.wday == 0
+        printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+      when date.wday == 6
+        printf "\e[36m%s%s%2d\e[0m", holiday_name, today_marker, date.day
+      else
+        printf       "%s%s%2d\e[0m", holiday_name, today_marker, date.day
+      end
     end
     puts
   end
+  puts
 end
 
 matrix_cal(2014, 9)
