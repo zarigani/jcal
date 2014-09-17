@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -W0
+# encoding: utf-8
 
 module JPCalendar
   require 'date'
