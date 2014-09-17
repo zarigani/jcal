@@ -10,13 +10,19 @@ module JPCalendar
     end
 
     def spring_day
-      dy = self.year - 1900
-      Date.new(self.year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
+      case year
+      when 1900..2099
+        dy = year - 1900
+        Date.new(year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
+      end
     end
 
     def autumn_day
-      dy = self.year - 1900
-      Date.new(self.year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
+      case year
+      when 1900..2099
+        dy = year - 1900
+        Date.new(year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
+      end
     end
   end
 
