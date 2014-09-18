@@ -133,7 +133,7 @@ module Jcal
 
   module_function
 
-  def matrix(y, m)
+  def render_matrix(y, m)
     start_date = Date.new(y, m) - Date.new(y, m).wday
     end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
     date_list = start_date..end_date
@@ -167,7 +167,7 @@ module Jcal
     puts
   end
 
-  def list(y, col)
+  def render_list(y, col)
     week_ja = %w(日 月 火 水 木 金 土)
     date366 = (Date.new(2004, 1, 1)..Date.new(2004, 12, 31)).to_a
     list366 = Array.new(366, '')
@@ -193,6 +193,21 @@ module Jcal
     end
     list366.each {|list| puts list}
   end
+
+  def matrix(base_year, start_month, end_month=start_month)
+    base_year -= 1 if start_month <= 0
+    start_month, end_month = *[start_month, end_month].map {|i| i %= 12; i == 0 ? 12 : i}
+    if start_month <= end_month
+      (start_month..end_month).each {|i| render_matrix(base_year    , i)}
+    else
+      (start_month..12       ).each {|i| render_matrix(base_year    , i)}
+      (          1..end_month).each {|i| render_matrix(base_year + 1, i)}
+    end
+  end
+
+  def list(base_year, column)
+    render_list(base_year, [column, 10].min)
+  end
 end # module Jcal
 
 require 'optparse'
@@ -202,8 +217,8 @@ options = {}
 OptionParser.new do |opt|
   opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm]'
   opt.separator('')
-  opt.on('-y[NUM]', 'List NUM years.(0-10)', Integer) {|v| options[:years] = v}
-  opt.on('-m[NUM]', 'Show NUM months.(0-12)', Integer) {|v| options[:months] = v}
+  opt.on('-y[NUM]', 'List NUM years.(0-10)') {|v| options[:years] = v.to_i}
+  opt.on('-m[NUM]', 'Show NUM months.(0-12)') {|v| options[:months] = v.to_i}
   opt.separator('')
   opt.on('Example:',
          '    jcal                           # Show monthly calendar of this month.',
@@ -224,61 +239,24 @@ OptionParser.new do |opt|
   end
 end
 
-# ARGVから読み込み
-ARGV[0] && (ARGV[0].to_i > 12 ? y1 = ARGV[0].to_i : m1 = ARGV[0].to_i)
-ARGV[1] && (ARGV[1].to_i > 12 ? y2 = ARGV[1].to_i : m2 = ARGV[1].to_i)
+# 引数解析
+y = []
+m = []
+(0..1).each {|i| ARGV[i] && (ARGV[i].to_i > 12 ? y << ARGV[i].to_i : m << ARGV[i].to_i)}
+m.map! {|i| i == 0 ? Date.today.month : i}
 
-# '.'を今月に変換
-m1 == 0 && m1 = Date.today.month
-m2 == 0 && m2 = Date.today.month
+m = [1, 12]                                   if y.size == 1 && m.size == 0                       # 西暦1・月0なら、12カ月分表示
+options[:years] ||= (y[1] - y[0]).abs + 1     if y.size == 2                                      # 西暦2なら、-yに期間を追加
 
-# nilの処理
-m1 ||= m2
-m1 ||= Date.today.month if ARGV.empty? || options.key?(:months)
-y1 ||= y2
-y1 ||= Date.today.year
+m[0] ||= Date.today.month
+y[0] ||= Date.today.year
+m = [m[0] - 1, m[0] + 1]                      if options.key?(:months) && options[:months] == 0   # -m引数なしは、前月から翌月まで表示
+m = [m[0]    , m[0] + options[:months] - 1]   if options.key?(:months) && options[:months] > 0    # -m引数ありは、指定した月数分を表示
+m = [1, 12]                                   if options.key?(:years) && options[:years] <= 1     # -y指定期間が1年以下なら、12カ月分表示
+(y[0] = options[:years]; options[:years] = 0) if options.key?(:years) && options[:years] >= 1900  # -y西暦なら、西暦と解釈
 
-# mオプション引数なしの場合は、前月から翌月まで表示する準備
-if options.key?(:months) && options[:months].to_i == 0
-  m2 = m1 + 1
-  m1 -= 1
-  m1 <  1 && (m1 = 12 ; y1 -= 1)
-  m2 > 12 && (m2 =  1)
-end
-
-# mオプション引数ありの場合は、指定した月数分表示する準備
-if options.key?(:months) && options[:months].to_i > 0
-  m2 = m1 + options[:months].to_i - 1
-  m2 > 12 && m2 %= 12
-end
-
-# 西暦2つの場合は、リスト表示する準備
-if y1 && y2 && (y2 - y1) > 0
-  options[:years] ||= y2 - y1 + 1
-end
-
-# yオプションが西暦なら、西暦と解釈
-# yオプションの最大値は、10
-if options[:years].to_i >= 1900
-  y1 = options[:years]
-  options[:years] = 0
-elsif options[:years].to_i > 10
-  options[:years] = 10
-end
-
-# カレンダー出力
-case
-when options[:years].to_i > 0
-  Jcal::list(y1, options[:years])
-when m1 && !m2 && !options.key?(:years)
-  Jcal::matrix(y1, m1)
-when m1 &&  m2 && !options.key?(:years)
-  if m1 <= m2
-    (m1..m2).each {|i| Jcal::matrix(y1, i)}
-  else
-    (m1..12).each {|i| Jcal::matrix(y1, i)}
-    ( 1..m2).each {|i| Jcal::matrix(y1 + 1, i)}
-  end
+if options.key?(:years) && options[:years] >= 2
+  Jcal::list(y[0], options[:years])
 else
-  (1..12).each {|i| Jcal::matrix(y1, i)}
+  Jcal::matrix(y[0], *m)
 end
