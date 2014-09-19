@@ -245,8 +245,8 @@ m = []
 (0..1).each {|i| ARGV[i] && (ARGV[i].to_i > 12 ? y << ARGV[i].to_i : m << ARGV[i].to_i)}
 m.map! {|i| i == 0 ? Date.today.month : i}
 
-m = [1, 12]                                   if y.size == 1 && m.size == 0 && !options.key?(:months) # 西暦1・月0・-mなしなら、12カ月分表示
-options[:years] ||= (y[1] - y[0]).abs + 1     if y.size == 2                                          # 西暦2なら、-yに期間を追加
+m = [1, 12]                                   if y.size == 1 && m.empty? && !options.key?(:months)# 西暦1・月0・-mなしなら、12カ月分表示
+options[:years] ||= (y[1] - y[0]).abs + 1     if y.size == 2                                      # 西暦2なら、-yに期間を追加
 
 m[0] ||= Date.today.month
 y[0] ||= Date.today.year
@@ -256,7 +256,7 @@ m = [1, 12]                                   if options.key?(:years) && options
 (y[0] = options[:years]; options[:years] = 0) if options.key?(:years) && options[:years] >= 1900  # -y西暦なら、西暦と解釈
 
 if options.key?(:years) && options[:years] >= 2
-  Jcal::list(y[0], options[:years])
+  Jcal::list(y.min, options[:years])
 else
-  Jcal::matrix(y[0], *m)
+  Jcal::matrix(y.min, *m)
 end
