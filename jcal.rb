@@ -130,6 +130,7 @@ using JcalEx
 
 module Jcal
   include JPCalendar
+  WEEK_JA = %w(日 月 火 水 木 金 土)
 
   module_function
 
@@ -140,7 +141,7 @@ module Jcal
     holiday = JPHoliday.new(y)
 
     puts sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
-    header = %w(日 月 火 水 木 金 土).map {|s| s.rjust_ja(16)}
+    header = WEEK_JA.map {|s| s.rjust_ja(16)}
     header[0] = "\e[31m" + header[0] + "\e[0m"
     header[6] = "\e[36m" + header[6] + "\e[0m"
     print header.join, "\n"
@@ -168,7 +169,6 @@ module Jcal
   end
 
   def render_list(y, col)
-    week_ja = %w(日 月 火 水 木 金 土)
     date366 = (Date.new(2004, 1, 1)..Date.new(2004, 12, 31)).to_a
     list366 = Array.new(366, '')
     (y...y + col).each do |y|
@@ -181,13 +181,13 @@ module Jcal
         when date == nil
           list366[i] += sprintf("\e[ 0m%s%s%s\e[0m",  ' ' * 10,            ' ' * 2, holiday_name)
         when holiday.lookup(date)
-          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
         when date.wday == 0
-          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
         when date.wday == 6
-          list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+          list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
         else
-          list366[i] += sprintf("\e[ 0m%s%s%s\e[0; 0m%s\e[0m",today_marker , date.to_s, week_ja[date.wday], holiday_name)
+          list366[i] += sprintf("\e[ 0m%s%s%s\e[0; 0m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
         end
       end
     end
