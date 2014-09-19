@@ -215,7 +215,7 @@ require 'optparse'
 # オプション解析
 options = {}
 OptionParser.new do |opt|
-  opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm]'
+  opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]'
   opt.separator('')
   opt.on('-y[NUM]', 'List NUM years.(0-10)') {|v| options[:years] = v.to_i}
   opt.on('-m[NUM]', 'Show NUM months.(0-12)') {|v| options[:months] = v.to_i}
@@ -230,6 +230,7 @@ OptionParser.new do |opt|
          '    jcal 2011 2012                 # List from 2011 to 2012.',
          '    jcal -m                        # Show monthly calendar from last month to next month.',
          '    jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.',
+         '    jcal 2010 2 8                  # Show monthly calendar from Feb.2010 to Aug.2010.',
          )
   begin
     opt.parse!(ARGV)
@@ -240,9 +241,8 @@ OptionParser.new do |opt|
 end
 
 # 引数解析
-y = []
-m = []
-(0..1).each {|i| ARGV[i] && (ARGV[i].to_i > 12 ? y << ARGV[i].to_i : m << ARGV[i].to_i)}
+y = ARGV.map(&:to_i).select {|i| i >  12 }
+m = ARGV.map(&:to_i).select {|i| i <= 12 }
 m.map! {|i| i == 0 ? Date.today.month : i}
 
 m = [1, 12]                                   if y.size == 1 && m.empty? && options.empty?        # 西暦1個・月0個・オプションなしは、12カ月分表示
