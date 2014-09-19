@@ -153,14 +153,12 @@ module Jcal
         case
         when date.month != m
           printf "\e[37m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-        when holiday.lookup(date)
-          printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-        when date.wday == 0
+        when date.wday == 0, holiday.lookup(date)
           printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
         when date.wday == 6
           printf "\e[36m%s%s%2d\e[0m", holiday_name, today_marker, date.day
         else
-          printf       "%s%s%2d\e[0m", holiday_name, today_marker, date.day
+          printf "\e[ 0m%s%s%2d\e[0m", holiday_name, today_marker, date.day
         end
       end
       puts
@@ -180,9 +178,7 @@ module Jcal
         case
         when date == nil
           list366[i] += sprintf("\e[ 0m%s%s%s\e[0m",  ' ' * 10,            ' ' * 2, holiday_name)
-        when holiday.lookup(date)
-          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
-        when date.wday == 0
+        when date.wday == 0, holiday.lookup(date)
           list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
         when date.wday == 6
           list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
