@@ -245,18 +245,17 @@ m = []
 (0..1).each {|i| ARGV[i] && (ARGV[i].to_i > 12 ? y << ARGV[i].to_i : m << ARGV[i].to_i)}
 m.map! {|i| i == 0 ? Date.today.month : i}
 
-m = [1, 12]                                   if y.size == 1 && m.empty? && !options.key?(:months)# 西暦1・月0・-mなしなら、12カ月分表示
-options[:years] ||= (y[1] - y[0]).abs + 1     if y.size == 2                                      # 西暦2なら、-yに期間を追加
-
-m[0] ||= Date.today.month
+m = [1, 12]                                   if y.size == 1 && m.empty? && options.empty?        # 西暦1個・月0個・オプションなしは、12カ月分表示
 y[0] ||= Date.today.year
+m[0] ||= Date.today.month
 m = [m[0] - 1, m[0] + 1]                      if options.key?(:months) && options[:months] == 0   # -m引数なしは、前月から翌月まで表示
 m = [m[0]    , m[0] + options[:months] - 1]   if options.key?(:months) && options[:months] > 0    # -m引数ありは、指定した月数分を表示
-m = [1, 12]                                   if options.key?(:years) && options[:years] <= 1     # -y指定期間が1年以下なら、12カ月分表示
 (y[0] = options[:years]; options[:years] = 0) if options.key?(:years) && options[:years] >= 1900  # -y西暦なら、西暦と解釈
+m = [1, 12]                                   if options.key?(:years) && options[:years] <= 1     # -y指定期間が1年以下は、12カ月分表示
+options[:years] ||= (y[1] - y[0]).abs + 1     if y.size == 2 && options.empty?                    # 西暦2個・月0個・オプションなしは、-yに期間を追加
 
 if options.key?(:years) && options[:years] >= 2
   Jcal::list(y.min, options[:years])
 else
-  Jcal::matrix(y.min, *m)
+  Jcal::matrix(y[0], *m)
 end
