@@ -6,14 +6,14 @@ module JPCalendar
 
   class JPDate < Date
     def monday(w)
-      self + 7 * w.to_i - ((self - 1).wday + 6) % 7 - 1
+      Date.new(year, month, 7 * w.to_i - ((self - 1).wday + 6) % 7)
     end
 
     def spring_day
       case year
       when 1900..2099
         dy = year - 1900
-        Date.new(year, 3, (21.4471 + 0.242377*dy - dy/4).to_i)
+        Date.new(year, month, (21.4471 + 0.242377*dy - dy/4).to_i)
       end
     end
 
@@ -21,7 +21,7 @@ module JPCalendar
       case year
       when 1900..2099
         dy = year - 1900
-        Date.new(year, 9, (23.8896 + 0.242032*dy - dy/4).to_i)
+        Date.new(year, month, (23.8896 + 0.242032*dy - dy/4).to_i)
       end
     end
   end
