@@ -24,7 +24,7 @@ module JPCalendar
         Date.new(year, month, (23.8896 + 0.242032*dy - dy/4).to_i)
       end
     end
-  end # JPCalc
+  end # class JPCalc
 
   class JPHoliday
     HOLIDAYS = [
@@ -55,8 +55,11 @@ module JPCalendar
       {month:11, day:23,          term:   0..9999, name:'勤労感謝の日'},
       {month:12, day:23,          term:1989..9999, name:'天皇誕生日'},
     ]
+    @@holidays_database = nil
 
     def initialize(y)
+      return if y == year
+
       # 有効な祝日を取り出し、日付を追加する
       enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
         case h[:day]
@@ -86,17 +89,21 @@ module JPCalendar
         end
       end
 
-      @holidays_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
+      @@holidays_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
     end
-  
+
+    def year
+      @@holidays_database ? @@holidays_database[0][0].year : nil
+    end
+
     def lookup(*args)
       case args.first
       when Fixnum
-        @holidays_database.assoc(Date.new(*args))
+        @@holidays_database.assoc(Date.new(*args))
       when Date
-        @holidays_database.assoc(*args)
+        @@holidays_database.assoc(*args)
       when String
-        @holidays_database.assoc(Date.parse(*args))
+        @@holidays_database.assoc(Date.parse(*args))
       end
     end
   end # class JPHoliday
