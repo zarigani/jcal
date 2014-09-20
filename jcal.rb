@@ -4,7 +4,7 @@
 module JPCalendar
   require 'date'
 
-  class JPDate < Date
+  class JPCalc < Date
     def monday(w)
       Date.new(year, month, 7 * w.to_i - ((self - 1).wday + 6) % 7)
     end
@@ -24,7 +24,7 @@ module JPCalendar
         Date.new(year, month, (23.8896 + 0.242032*dy - dy/4).to_i)
       end
     end
-  end
+  end # JPCalc
 
   class JPHoliday
     HOLIDAYS = [
@@ -63,7 +63,7 @@ module JPCalendar
         when Fixnum
           {date: Date.new(y, h[:month], h[:day])}.merge(h)
         when String
-          {date: JPDate.new(y, h[:month]).send(*h[:day].split)}.merge(h)
+          {date: JPCalc.new(y, h[:month]).send(*h[:day].split)}.merge(h)
         end
       end
 
@@ -100,6 +100,12 @@ module JPCalendar
       end
     end
   end # class JPHoliday
+
+  class JPDate < Date
+    def holiday
+      JPHoliday.new(year).lookup(self).to_a.last
+    end
+  end # class JPDate
 end # module JPCalendar
 
 module JcalEx
@@ -135,10 +141,9 @@ module Jcal
   module_function
 
   def render_matrix(y, m)
-    start_date = Date.new(y, m) - Date.new(y, m).wday
-    end_date   = Date.new(y, m, -1) + (6 - Date.new(y, m, -1).wday)
+    start_date = JPDate.new(y, m) - JPDate.new(y, m).wday
+    end_date   = JPDate.new(y, m, -1) + (6 - JPDate.new(y, m, -1).wday)
     date_list = start_date..end_date
-    holiday = JPHoliday.new(y)
 
     puts sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
     header = WEEK_JA.map {|s| s.rjust_ja(16)}
@@ -149,12 +154,12 @@ module Jcal
     date_list.each_slice(7) do |week|
       week.each do |date|
         today_marker = date == Date.today ? "\e[7m" : ''
-        holiday_name = holiday.lookup(date).last.rjust_ja(14) rescue ' ' * 14
+        holiday_name = date.holiday.to_s.rjust_ja(14)
         fgcolor      = case
-                       when date.month != m;                        37;
-                       when date.wday  == 0, holiday.lookup(date);  31;
-                       when date.wday  == 6;                        36;
-                       else                                          0;
+                       when date.month != m;                37;
+                       when date.wday  == 0, date.holiday;  31;
+                       when date.wday  == 6;                36;
+                       else                                  0;
                        end
         printf "\e[%dm%s%s%2d\e[0m", fgcolor, holiday_name, today_marker, date.day
       end
@@ -167,18 +172,17 @@ module Jcal
     date366 = (Date.new(2004, 1, 1)..Date.new(2004, 12, 31)).to_a
     list366 = Array.new(366, '')
     (y...y + col).each do |y|
-      holiday = JPHoliday.new(y)
       date366.each_with_index do |d366, i|
-        date         = Date.new(y, d366.month, d366.day)      rescue nil
+        date         = JPDate.new(y, d366.month, d366.day)    rescue nil
         today_marker = (date == Date.today) ? "\e[7m" : ''    rescue ''
         date_text    = date.to_date.to_s                      rescue ' ' * 10
         week_name    = WEEK_JA[date.wday]                     rescue ' ' * 2
-        holiday_name = holiday.lookup(date).last.ljust_ja(12) rescue ' ' * 12
+        holiday_name = date.holiday.to_s.ljust_ja(12)         rescue ' ' * 12
         fgcolor      = case
-                       when date == nil;                             0;
-                       when date.wday == 0, holiday.lookup(date);   31;
-                       when date.wday == 6;                         36;
-                       else                                          0;
+                       when date == nil;                     0;
+                       when date.wday == 0, date.holiday;   31;
+                       when date.wday == 6;                 36;
+                       else                                  0;
                        end
         list366[i] += sprintf("\e[%dm%s%s%s\e[0;%dm%s\e[0m", fgcolor, today_marker, date_text, week_name, fgcolor, holiday_name)
       end
