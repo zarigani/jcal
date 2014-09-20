@@ -150,16 +150,13 @@ module Jcal
       week.each do |date|
         today_marker = date == Date.today ? "\e[7m" : ''
         holiday_name = holiday.lookup(date).last.rjust_ja(14) rescue ' ' * 14
-        case
-        when date.month != m
-          printf "\e[37m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-        when date.wday == 0, holiday.lookup(date)
-          printf "\e[31m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-        when date.wday == 6
-          printf "\e[36m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-        else
-          printf "\e[ 0m%s%s%2d\e[0m", holiday_name, today_marker, date.day
-        end
+        fgcolor      = case
+                       when date.month != m;                        37;
+                       when date.wday  == 0, holiday.lookup(date);  31;
+                       when date.wday  == 6;                        36;
+                       else                                          0;
+                       end
+        printf "\e[%dm%s%s%2d\e[0m", fgcolor, holiday_name, today_marker, date.day
       end
       puts
     end
@@ -171,20 +168,19 @@ module Jcal
     list366 = Array.new(366, '')
     (y...y + col).each do |y|
       holiday = JPHoliday.new(y)
-      date366.each_with_index do |date, i|
-        date = Date.new(y, date.month, date.day) rescue nil
-        today_marker = (date == Date.today) ? "\e[7m" : '' rescue ''
+      date366.each_with_index do |d366, i|
+        date         = Date.new(y, d366.month, d366.day)      rescue nil
+        today_marker = (date == Date.today) ? "\e[7m" : ''    rescue ''
+        date_text    = date.to_date.to_s                      rescue ' ' * 10
+        week_name    = WEEK_JA[date.wday]                     rescue ' ' * 2
         holiday_name = holiday.lookup(date).last.ljust_ja(12) rescue ' ' * 12
-        case
-        when date == nil
-          list366[i] += sprintf("\e[ 0m%s%s%s\e[0m",  ' ' * 10,            ' ' * 2, holiday_name)
-        when date.wday == 0, holiday.lookup(date)
-          list366[i] += sprintf("\e[31m%s%s%s\e[0;31m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
-        when date.wday == 6
-          list366[i] += sprintf("\e[36m%s%s%s\e[0;36m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
-        else
-          list366[i] += sprintf("\e[ 0m%s%s%s\e[0; 0m%s\e[0m",today_marker , date.to_s, WEEK_JA[date.wday], holiday_name)
-        end
+        fgcolor      = case
+                       when date == nil;                             0;
+                       when date.wday == 0, holiday.lookup(date);   31;
+                       when date.wday == 6;                         36;
+                       else                                          0;
+                       end
+        list366[i] += sprintf("\e[%dm%s%s%s\e[0;%dm%s\e[0m", fgcolor, today_marker, date_text, week_name, fgcolor, holiday_name)
       end
     end
     list366.each {|list| puts list}
