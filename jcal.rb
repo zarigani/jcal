@@ -4,29 +4,7 @@
 module JPCalendar
   require 'date'
 
-  class JPCalc < Date
-    def monday(w)
-      Date.new(year, month, 7 * w.to_i - ((self - 1).wday + 6) % 7)
-    end
-
-    def spring_day
-      case year
-      when 1900..2099
-        dy = year - 1900
-        Date.new(year, month, (21.4471 + 0.242377*dy - dy/4).to_i)
-      end
-    end
-
-    def autumn_day
-      case year
-      when 1900..2099
-        dy = year - 1900
-        Date.new(year, month, (23.8896 + 0.242032*dy - dy/4).to_i)
-      end
-    end
-  end # class JPCalc
-
-  class JPHoliday
+  class JPDate < Date
     HOLIDAYS = [
       {month:4,  day:10,          term:1959..1959, name:'結婚の儀'},
       {month:2,  day:24,          term:1989..1989, name:'大喪の礼'},
@@ -57,16 +35,23 @@ module JPCalendar
     ]
     @@holidays_database = nil
 
-    def initialize(y)
-      return if y == year
+    def holiday
+      build_holiday(year) if year != holiday_year
+      @@holidays_database.assoc(self).to_a.last
+    end
 
+    def holiday_year
+      @@holidays_database ? @@holidays_database[0][0].year : nil
+    end
+
+    def build_holiday(y)
       # 有効な祝日を取り出し、日付を追加する
       enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
         case h[:day]
         when Fixnum
           {date: Date.new(y, h[:month], h[:day])}.merge(h)
         when String
-          {date: JPCalc.new(y, h[:month]).send(*h[:day].split)}.merge(h)
+          {date: send(*h[:day].split, y, h[:month])}.merge(h)
         end
       end
 
@@ -92,25 +77,24 @@ module JPCalendar
       @@holidays_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
     end
 
-    def year
-      @@holidays_database ? @@holidays_database[0][0].year : nil
+    def monday(w, y, m)
+      Date.new(y, m, 7 * w.to_i - ((Date.new(y, m) - 1).wday + 6) % 7)
     end
 
-    def lookup(*args)
-      case args.first
-      when Fixnum
-        @@holidays_database.assoc(Date.new(*args))
-      when Date
-        @@holidays_database.assoc(*args)
-      when String
-        @@holidays_database.assoc(Date.parse(*args))
+    def spring_day(y, m)
+      case y
+      when 1900..2099
+        dy = y - 1900
+        Date.new(y, m, (21.4471 + 0.242377*dy - dy/4).to_i)
       end
     end
-  end # class JPHoliday
 
-  class JPDate < Date
-    def holiday
-      JPHoliday.new(year).lookup(self).to_a.last
+    def autumn_day(y, m)
+      case y
+      when 1900..2099
+        dy = y - 1900
+        Date.new(y, m, (23.8896 + 0.242032*dy - dy/4).to_i)
+      end
     end
   end # class JPDate
 end # module JPCalendar
