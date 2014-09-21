@@ -32,15 +32,15 @@ class JPDate < Date
     {month:11, day:23,          term:   0..9999, name:'勤労感謝の日'},
     {month:12, day:23,          term:1989..9999, name:'天皇誕生日'},
   ]
-  @@holidays_database = nil
+  @@holiday_database = nil
 
   def holiday
     build_holiday(year) if year != holiday_year
-    @@holidays_database.assoc(self).to_a.last
+    @@holiday_database.assoc(self).to_a.last
   end
 
   def holiday_year
-    @@holidays_database ? @@holidays_database[0][0].year : nil
+    @@holiday_database ? @@holiday_database[0][0].year : nil
   end
 
   def build_holiday(y)
@@ -73,7 +73,7 @@ class JPDate < Date
       end
     end
 
-    @@holidays_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
+    @@holiday_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
   end
 
   def monday(w, y, m)
