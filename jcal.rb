@@ -39,6 +39,8 @@ class JPDate < Date
     @@holiday_database.assoc(self).to_a.last
   end
 
+  private
+
   def holiday_year
     @@holiday_database ? @@holiday_database[0][0].year : nil
   end
