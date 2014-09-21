@@ -82,19 +82,15 @@ class JPDate < Date
     Date.new(y, m, 7 * w.to_i - ((Date.new(y, m) - 1).wday + 6) % 7)
   end
 
-  def spring_day(y, m)
-    case y
-    when 1900..2099
-      dy = y - 1900
-      Date.new(y, m, (21.4471 + 0.242377*dy - dy/4).to_i)
-    end
-  end
+  def spring_day(y, m); equinox_day(y, m); end
+  def autumn_day(y, m); equinox_day(y, m); end
 
-  def autumn_day(y, m)
+  def equinox_day(y, m)
     case y
     when 1900..2099
       dy = y - 1900
-      Date.new(y, m, (23.8896 + 0.242032*dy - dy/4).to_i)
+      return Date.new(y, m, (21.4471 + 0.242377*dy - dy/4).to_i) if m == 3
+      return Date.new(y, m, (23.8896 + 0.242032*dy - dy/4).to_i) if m == 9
     end
   end
 end # class JPDate
