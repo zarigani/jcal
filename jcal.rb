@@ -35,30 +35,28 @@ class JPDate < Date
   @@holidays = {}
 
   def holiday
-    build_holiday(year) if year != holiday_year
+    build_holiday if year != holiday_year
     @@holidays[self]
   end
 
   private
 
   def holiday_year
-    @@holidays.keys[0].year rescue nil
+    @@holidays.keys.first.year rescue nil
   end
 
-  def build_holiday(y)
+  def build_holiday
     @@holidays = {}
-    enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}
-    enable_holidays.each do |h|
-      case h[:day]
-      when Fixnum
-        @@holidays[Date.new(y, h[:month], h[:day])]    = h[:name]
-      when String
-        @@holidays[send(*h[:day].split, y, h[:month])] = h[:name]
-      end
+    HOLIDAYS.select {|h| h[:term].include?(year)}.each do |h|
+      date = case h[:day]
+             when Fixnum then Date.new(year, h[:month], h[:day])
+             when String then send(*h[:day].split, year, h[:month])
+             end
+      @@holidays[date] = h[:name]
     end
-    holidays_dates = @@holidays.keys
-    add_substitute_holiday(holidays_dates)
-    add_national_holiday(holidays_dates)
+    dates = @@holidays.keys.sort
+    add_substitute_holiday(dates)
+    add_national_holiday(dates)
   end
 
   # 振替休日を追加
@@ -86,8 +84,8 @@ class JPDate < Date
     Date.new(y, m, 7 * w.to_i - ((Date.new(y, m) - 1).wday + 6) % 7)
   end
 
-  def spring_day(y, m); equinox_day(y, m); end
-  def autumn_day(y, m); equinox_day(y, m); end
+  def spring_day(*args) equinox_day(*args) end
+  def autumn_day(*args) equinox_day(*args) end
 
   def equinox_day(y, m)
     case y
@@ -107,20 +105,13 @@ module JcalEx
       half_lenght + full_length
     end
 
-    def ljust_ja(width, padstr=' ')
-      n = [0, width - length_ja].max
-      self + padstr * n
+    def margin(width)
+      [0, width - length_ja].max
     end
 
-    def rjust_ja(width, padstr=' ')
-      n = [0, width - length_ja].max
-      padstr * n + self
-    end
-
-    def center_ja(width, padstr=' ')
-      n = [0, width - length_ja].max
-      padstr * (n/2) + self + padstr * (n - n/2)
-    end
+    def ljust_ja (width, padstr=' ') self + padstr * margin(width) end
+    def rjust_ja (width, padstr=' ') padstr * margin(width) + self end
+    def center_ja(width, padstr=' ') padstr * (margin(width) / 2) + self + padstr * (margin(width + 1) / 2) end
   end
 end
 using JcalEx
@@ -144,10 +135,10 @@ module Jcal
         today_marker = date == Date.today ? "\e[7m" : ''
         holiday_name = date.holiday.to_s.rjust_ja(14)
         fgcolor      = case
-                       when date.month != m;                37;
-                       when date.wday  == 0, date.holiday;  31;
-                       when date.wday  == 6;                36;
-                       else                                  0;
+                       when date.month != m                 then 37
+                       when date.wday  == 0, date.holiday   then 31
+                       when date.wday  == 6                 then 36
+                       else                                       0
                        end
         printf "\e[%dm%s%s%2d\e[0m", fgcolor, holiday_name, today_marker, date.day
       end
@@ -161,16 +152,16 @@ module Jcal
     list366 = Array.new(366, '')
     (y...y + col).each do |y|
       date366.each_with_index do |d366, i|
-        date         = JPDate.new(y, d366.month, d366.day)    rescue nil
-        today_marker = (date == Date.today) ? "\e[7m" : ''    rescue ''
-        date_text    = date.to_date.to_s                      rescue ' ' * 10
-        week_name    = WEEK_JA[date.wday]                     rescue ' ' * 2
-        holiday_name = date.holiday.to_s.ljust_ja(12)         rescue ' ' * 12
+        date         = JPDate.new(y, d366.month, d366.day)  rescue nil
+        today_marker = (date == Date.today) ? "\e[7m" : ''  rescue ''
+        date_text    = date.to_date.to_s                    rescue ' ' * 10
+        week_name    = WEEK_JA[date.wday]                   rescue ' ' * 2
+        holiday_name = date.holiday.to_s.ljust_ja(12)       rescue ' ' * 12
         fgcolor      = case
-                       when date == nil;                     0;
-                       when date.wday == 0, date.holiday;   31;
-                       when date.wday == 6;                 36;
-                       else                                  0;
+                       when date == nil                     then  0
+                       when date.wday == 0, date.holiday    then 31
+                       when date.wday == 6                  then 36
+                       else                                       0
                        end
         list366[i] += sprintf("\e[%dm%s%s%s\e[0;%dm%s\e[0m", fgcolor, today_marker, date_text, week_name, fgcolor, holiday_name)
       end
