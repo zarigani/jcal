@@ -32,50 +32,54 @@ class JPDate < Date
     {month:11, day:23,          term:   0..9999, name:'勤労感謝の日'},
     {month:12, day:23,          term:1989..9999, name:'天皇誕生日'},
   ]
-  @@holiday_database = nil
+  @@holidays = {}
 
   def holiday
     build_holiday(year) if year != holiday_year
-    @@holiday_database.assoc(self).to_a.last
+    @@holidays[self]
   end
 
   private
 
   def holiday_year
-    @@holiday_database ? @@holiday_database[0][0].year : nil
+    @@holidays.keys[0].year rescue nil
   end
 
   def build_holiday(y)
-    # 有効な祝日を取り出し、日付を追加する
-    enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}.map do |h|
+    @@holidays = {}
+    enable_holidays = HOLIDAYS.select {|h| h[:term].include?(y)}
+    enable_holidays.each do |h|
       case h[:day]
       when Fixnum
-        {date: Date.new(y, h[:month], h[:day])}.merge(h)
+        @@holidays[Date.new(y, h[:month], h[:day])]    = h[:name]
       when String
-        {date: send(*h[:day].split, y, h[:month])}.merge(h)
+        @@holidays[send(*h[:day].split, y, h[:month])] = h[:name]
       end
     end
+    holidays_dates = @@holidays.keys
+    add_substitute_holiday(holidays_dates)
+    add_national_holiday(holidays_dates)
+  end
 
-    enable_dates = enable_holidays.map {|h| h[:date]}
-
-    # 振替休日を判定
-    enable_dates.each do |date|
+  # 振替休日を追加
+  def add_substitute_holiday(dates)
+    dates.each do |date|
       if date.wday == 0
-        while enable_dates.include?(date)
+        while @@holidays.keys.include?(date)
           date += 1
         end
-        enable_holidays << {date:date, name:'振替休日'}
+        @@holidays[date] = '振替休日'
       end
     end
+  end
 
-    # 国民の休日を判定
-    enable_dates.each_cons(2) do |a, b|
-      if b.day - a.day == 2 && (a + 1).wday != 0 && !enable_holidays.map {|h| h[:date]}.include?(a + 1)
-        enable_holidays << {date:a + 1, name:'国民の休日'}
+  # 国民の休日を追加
+  def add_national_holiday(dates)
+    dates.each_cons(2) do |a, b|
+      if b.day - a.day == 2 && (a + 1).wday != 0 && !@@holidays.keys.include?(a + 1)
+        @@holidays[a + 1] = '国民の休日'
       end
     end
-
-    @@holiday_database = enable_holidays.map {|h| [h[:date], h[:name]]}.sort
   end
 
   def monday(w, y, m)
