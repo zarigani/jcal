@@ -131,17 +131,15 @@ module Jcal
   module_function
 
   def render_matrix(y, m)
+    title = sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
+    week_names = WEEK_JA.map {|s| s.rjust_ja(16)}
+    week_names[0] = "\e[31m#{week_names[0]}\e[0m"
+    week_names[6] = "\e[36m#{week_names[6]}\e[0m"
+    puts title, week_names.join
+
     start_date = JPDate.new(y, m) - JPDate.new(y, m).wday
     end_date   = JPDate.new(y, m, -1) + (6 - JPDate.new(y, m, -1).wday)
-    date_list = start_date..end_date
-
-    puts sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
-    header = WEEK_JA.map {|s| s.rjust_ja(16)}
-    header[0] = "\e[31m" + header[0] + "\e[0m"
-    header[6] = "\e[36m" + header[6] + "\e[0m"
-    print header.join, "\n"
-
-    date_list.each_slice(7) do |week|
+    (start_date..end_date).each_slice(7) do |week|
       week.each do |date|
         today_marker = date == Date.today ? "\e[7m" : ''
         holiday_name = date.holiday.to_s.rjust_ja(14)
