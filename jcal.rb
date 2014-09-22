@@ -119,7 +119,7 @@ module JcalEx
 
     def center_ja(width, padstr=' ')
       n = [0, width - length_ja].max
-      padstr * (n/2) + self
+      padstr * (n/2) + self + padstr * (n - n/2)
     end
   end
 end
