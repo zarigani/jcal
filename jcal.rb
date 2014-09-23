@@ -100,18 +100,19 @@ end # class JPDate
 module JcalEx
   refine String do
     def length_ja
-      half_lenght = count(" -~")
+      half_lenght = count(" -~") + count("｡-ﾟ")
       full_length = (length - half_lenght) * 2
       half_lenght + full_length
     end
 
-    def margin(width)
-      [0, width - length_ja].max
+    def align_ja(method, width, padstr, dummy='A'*length_ja)
+      dummy.succ!.empty? && break while padstr.include?(dummy)
+      eval "dummy.#{method}(width, padstr).sub(dummy, self)"
     end
 
-    def ljust_ja (width, padstr=' ') self + padstr * margin(width) end
-    def rjust_ja (width, padstr=' ') padstr * margin(width) + self end
-    def center_ja(width, padstr=' ') padstr * (margin(width) / 2) + self + padstr * (margin(width + 1) / 2) end
+    def ljust_ja(width, padstr=' ') align_ja(:ljust, width, padstr) end
+    def rjust_ja(width, padstr=' ') align_ja(:rjust, width, padstr) end
+    def center_ja(width, padstr=' ') align_ja(:center, width, padstr) end
   end
 end
 using JcalEx
