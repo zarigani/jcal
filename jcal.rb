@@ -84,9 +84,6 @@ class JPDate < Date
     Date.new(y, m, 7 * w.to_i - ((Date.new(y, m) - 1).wday + 6) % 7)
   end
 
-  def spring_day(*args) equinox_day(*args) end
-  def autumn_day(*args) equinox_day(*args) end
-
   def equinox_day(y, m)
     case y
     when 1900..2099
@@ -95,6 +92,8 @@ class JPDate < Date
       return Date.new(y, m, (23.8896 + 0.242032*dy - dy/4).to_i) if m == 9
     end
   end
+  alias_method :spring_day, :equinox_day
+  alias_method :autumn_day, :equinox_day
 end # class JPDate
 
 module JcalEx
