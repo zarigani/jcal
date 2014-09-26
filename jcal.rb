@@ -77,7 +77,7 @@ class JPDate < Date
   # 国民の休日を追加
   def add_national_holiday(dates)
     dates.each_cons(2) do |a, b|
-      if b.day - a.day == 2 && (a + 1).wday != 0 && !@@holidays.keys.include?(a + 1) && a + 1 >= NATIONAL_HOLIDAY_START
+      if b - a == 2 && (a + 1).wday != 0 && !@@holidays.keys.include?(a + 1) && a + 1 >= NATIONAL_HOLIDAY_START
         @@holidays[a + 1] = '国民の休日'
       end
     end
