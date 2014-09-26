@@ -4,6 +4,7 @@
 require 'date'
 
 class JPDate < Date
+  # 国民の祝日に関する法律に準拠（昭和23年・1948年7月20日 公布・施行）
   HOLIDAYS = [
     {month:4,  day:10,          term:1959..1959, name:'結婚の儀'},
     {month:2,  day:24,          term:1989..1989, name:'大喪の礼'},
