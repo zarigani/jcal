@@ -106,10 +106,10 @@ module JcalEx
 
     def align_ja(method, width, padstr, dummy='A'*length_ja)
       if full_length == 0
-        eval "#{method}(width, padstr)"
+        send(method, width, padstr)
       else
         dummy.succ!.empty? && break while padstr.include?(dummy)
-        eval "dummy.#{method}(width, padstr).sub(dummy, self)"
+        dummy.send(method, width, padstr).sub(dummy, self)
       end
     end
   end
