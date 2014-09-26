@@ -9,17 +9,17 @@ class JPDate < Date
     {month:2,  day:24,          term:1989..1989, name:'大喪の礼'},
     {month:11, day:12,          term:1990..1990, name:'即位の礼'},
     {month:6,  day:9,           term:1993..1993, name:'結婚の儀'},
-    {month:1,  day:1,           term:   0..9999, name:'元旦'},
-    {month:1,  day:15,          term:   0..1999, name:'成人の日'},
+    {month:1,  day:1,           term:1949..9999, name:'元旦'},
+    {month:1,  day:15,          term:1949..1999, name:'成人の日'},
     {month:1,  day:'monday 2',  term:2000..9999, name:'成人の日'},
     {month:2,  day:11,          term:1967..9999, name:'建国記念日'},
     {month:3,  day:'spring_day',term:1900..2099, name:'春分の日'},
-    {month:4,  day:29,          term:   0..1988, name:'天皇誕生日'},
+    {month:4,  day:29,          term:1927..1988, name:'天皇誕生日'},
     {month:4,  day:29,          term:1989..2006, name:'みどりの日'},
     {month:4,  day:29,          term:2007..9999, name:'昭和の日'},
-    {month:5,  day:3 ,          term:   0..9999, name:'憲法記念日'},
+    {month:5,  day:3 ,          term:1949..9999, name:'憲法記念日'},
     {month:5,  day:4 ,          term:2007..9999, name:'みどりの日'},
-    {month:5,  day:5 ,          term:   0..9999, name:'こどもの日'},
+    {month:5,  day:5 ,          term:1949..9999, name:'こどもの日'},
     {month:7,  day:20,          term:1996..2002, name:'海の日'},
     {month:7,  day:'monday 3',  term:2003..9999, name:'海の日'},
     {month:8,  day:11,          term:2016..9999, name:'山の日'},
@@ -28,10 +28,12 @@ class JPDate < Date
     {month:9,  day:'autumn_day',term:1900..2099, name:'秋分の日'},
     {month:10, day:10,          term:1966..1999, name:'体育の日'},
     {month:10, day:'monday 2',  term:2000..9999, name:'体育の日'},
-    {month:11, day:3,           term:   0..9999, name:'文化の日'},
-    {month:11, day:23,          term:   0..9999, name:'勤労感謝の日'},
+    {month:11, day:3,           term:1948..9999, name:'文化の日'},
+    {month:11, day:23,          term:1948..9999, name:'勤労感謝の日'},
     {month:12, day:23,          term:1989..9999, name:'天皇誕生日'},
   ]
+  SUBSTITUTE_HOLIDAY_START = Date.new(1973,  4, 12)
+  NATIONAL_HOLIDAY_START   = Date.new(1985, 12, 27)
   @@holidays = {}
 
   def holiday
@@ -62,7 +64,7 @@ class JPDate < Date
   # 振替休日を追加
   def add_substitute_holiday(dates)
     dates.each do |date|
-      if date.wday == 0
+      if date.wday == 0 && date >= SUBSTITUTE_HOLIDAY_START
         while @@holidays.keys.include?(date)
           date += 1
         end
@@ -74,7 +76,7 @@ class JPDate < Date
   # 国民の休日を追加
   def add_national_holiday(dates)
     dates.each_cons(2) do |a, b|
-      if b.day - a.day == 2 && (a + 1).wday != 0 && !@@holidays.keys.include?(a + 1)
+      if b.day - a.day == 2 && (a + 1).wday != 0 && !@@holidays.keys.include?(a + 1) && a + 1 >= NATIONAL_HOLIDAY_START
         @@holidays[a + 1] = '国民の休日'
       end
     end
