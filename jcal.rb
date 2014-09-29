@@ -165,7 +165,7 @@ class JPDate < Date
   end
 
   def monday(w, y, m)
-    Date.new(y, m, 7 * w.to_i - ((Date.new(y, m) - 1).wday + 6) % 7)
+    Date.new(y, m, 7 * w.to_i - (Date.new(y, m) - 2).wday)
   end
 
   def equinox_day(y, m)
