@@ -149,9 +149,7 @@ class JPDate < Date
   def add_substitute_holiday(dates)
     dates.each do |date|
       if date.wday == 0 && date >= SUBSTITUTE_HOLIDAY_START
-        while @@holidays.keys.include?(date)
-          date += 1
-        end
+        date += 1 while @@holidays[date]
         @@holidays[date] = '振替休日'
       end
     end
@@ -160,7 +158,7 @@ class JPDate < Date
   # 国民の休日を追加
   def add_national_holiday(dates)
     dates.each_cons(2) do |a, b|
-      if b - a == 2 && (a + 1).wday != 0 && !@@holidays.keys.include?(a + 1) && a + 1 >= NATIONAL_HOLIDAY_START
+      if b - a == 2 && (a + 1).wday != 0 && !@@holidays[a + 1] && a + 1 >= NATIONAL_HOLIDAY_START
         @@holidays[a + 1] = '国民の休日'
       end
     end
