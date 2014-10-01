@@ -28,7 +28,7 @@ module Jcal
   module_function
 
   def render_matrix(y, m)
-    title = sprintf("%4d年 %2d月", y, m).center_ja(16 * 7)
+    title = ("（#{JPDate::Era.name_year(y, m).join('/')}）" + sprintf("%4d年 %2d月", y, m)).center_ja(16 * 7)
     week_names = WEEK_JA.map {|s| s.rjust_ja(16)}
     week_names[0] = "\e[31m#{week_names[0]}\e[0m"
     week_names[6] = "\e[36m#{week_names[6]}\e[0m"

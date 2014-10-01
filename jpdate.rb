@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'date'
+require './jpdate/era'
 
 # 日本の太陽暦の始まり
 # 明治5年11月9日・1872年12月9日施行 太政官布告第337号 改暦ノ布告
