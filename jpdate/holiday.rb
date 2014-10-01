@@ -159,9 +159,15 @@ class JPDate < Date
       end
     end
 
-    def monday(w, y, m)
-      Date.new(y, m, 7 * w.to_i - (Date.new(y, m) - 2).wday)
+    # y年m月の第n w曜日の日付を返す
+    #    Sun Mon Tue Wed Thu Fri Sat
+    # w:  0   1   2   3   4   5   6
+    # 以下2014年10月第2月曜日の場合
+    # nth_week_day(2014, 10, 2, 1)
+    def nth_week_day(y, m, n, w)
+      Date.new(y, m, 7 * n - (Date.new(y, m) - w - 1).wday)
     end
+    def monday(n, y, m) nth_week_day(y, m, n.to_i, 1) end
 
     def equinox_day(y, m)
       case y
