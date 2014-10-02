@@ -1,6 +1,6 @@
 #!/usr/bin/ruby -W0
 # encoding: utf-8
-require './jpdate'
+require_relative 'jpdate'
 
 module JcalEx
   refine String do

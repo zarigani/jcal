@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'date'
-require './jpdate/era'
-require './jpdate/holiday'
+require_relative 'jpdate/era'
+require_relative 'jpdate/holiday'
 
 class JPDate < Date
   def holiday
