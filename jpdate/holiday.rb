@@ -128,6 +128,8 @@ class JPDate < Date
       @@holidays.sort
     end
 
+    private
+
     def initialize(y)
       @holidays = {}
       HOLIDAYS.select {|h| h[:term].include?(y)}.each do |h|
