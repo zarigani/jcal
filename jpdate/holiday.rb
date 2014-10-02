@@ -165,6 +165,8 @@ class JPDate < Date
       end
     end
 
+    def monday(n, y, m) nth_week_day(y, m, n.to_i, 1) end
+
     # y年m月の第n w曜日の日付を返す
     #    Sun Mon Tue Wed Thu Fri Sat
     # w:  0   1   2   3   4   5   6
@@ -173,7 +175,6 @@ class JPDate < Date
     def nth_week_day(y, m, n, w)
       Date.new(y, m, 7 * n - (Date.new(y, m) - w - 1).wday)
     end
-    def monday(n, y, m) nth_week_day(y, m, n.to_i, 1) end
 
     # 春分・秋分の日付を返す
     def equinox_day(y, m)
