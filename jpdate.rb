@@ -5,6 +5,6 @@ require './jpdate/holiday'
 
 class JPDate < Date
   def holiday
-    JPDate::Holiday.name(self)
+    Holiday.name(self)
   end
 end # class JPDate
