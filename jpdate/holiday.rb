@@ -113,11 +113,15 @@ class JPDate < Date
     @@holidays = {}
     @@years = []
 
+    # 指定した日付の祝日名称を返す
     def self.name(date)
       new(date.year) unless @@years.include?(date.year)
       @@holidays[date]
     end
 
+    # 指定した期間の祝日リストを返す
+    # JPDate::Holiday.list(1989..2014)
+    # JPDate::Holiday.list(2015)
     def self.list(range)
       range = range..range if range.class == Fixnum
       range.each {|y| new(y) unless @@years.include?(y)}
@@ -169,6 +173,7 @@ class JPDate < Date
     end
     def monday(n, y, m) nth_week_day(y, m, n.to_i, 1) end
 
+    # 春分・秋分の日付を返す
     def equinox_day(y, m)
       case y
       when 1851..1899
