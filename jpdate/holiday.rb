@@ -192,5 +192,6 @@ class JPDate < Date
     end
     alias_method :spring_day, :equinox_day
     alias_method :autumn_day, :equinox_day
+
   end # class Holiday
 end # class JPDate

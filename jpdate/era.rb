@@ -41,5 +41,5 @@ class JPDate < Date
       name_year(y, m=nil, d=nil, format: '%s%02d', human: false, short: true)
     end
 
-  end
-end
+  end # module Era
+end # class JPDate < Date

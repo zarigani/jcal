@@ -18,6 +18,7 @@ module JcalEx
         dummy.send(method, width, padstr).sub(dummy, self)
       end
     end
+
   end
 end
 using JcalEx
@@ -89,6 +90,7 @@ module Jcal
   def list(base_year, column)
     render_list(base_year, [column, 10].min)
   end
+
 end # module Jcal
 
 require 'optparse'
