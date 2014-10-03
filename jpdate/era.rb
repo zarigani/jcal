@@ -38,7 +38,7 @@ class JPDate < Date
     # JPDate::Era.short_name_year(2014)                 # => ["H26"]
     # JPDate::Era.short_name_year(1926)                 # => ["T15", "S01"]
     def short_name_year(y, m=nil, d=nil)
-      name_year(y, m=nil, d=nil, format: '%s%02d', human: false, short: true)
+      name_year(y, m, d, format: '%s%02d', human: false, short: true)
     end
 
   end # module Era
