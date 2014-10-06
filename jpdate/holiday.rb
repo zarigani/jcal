@@ -125,7 +125,7 @@ class JPDate < Date
     def self.list(range)
       range = range..range if range.class == Fixnum
       range.each {|y| new(y) unless @@years.include?(y)}
-      @@holidays.sort
+      Hash[@@holidays.sort].select {|k, v| range.include?(k.year)}
     end
 
     private
