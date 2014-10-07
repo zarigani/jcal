@@ -12,13 +12,28 @@ jcalコマンド
   * 日本の暦は、明治6年・1973年1月1日より太陽暦で動いている。（それ以前は太陰暦）
   * このコマンドは、太陽暦以降の祝日に関する法律に可能な限り準拠しようとしている。
 
+Install
+-------
 
-使い方
+    $ git clone https://github.com/zarigani/jcal
+    $ cd jcal
+    $ sudo gem install jpdate
+
+または、
+
+    Click "Download ZIP" button in the GitHub(https://github.com/zarigani/jcal).
+
+    $ unzip jcal-master.zip
+    $ cd jcal-master
+    $ sudo gem install jpdate
+
+Usage
 -----
     Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]
 
         -y[NUM]                          List NUM years.(0-10)
         -m[NUM]                          Show NUM months.(0-12)
+        -e                               List with the name of Japanese era.
 
     Example:
         jcal                           # Show monthly calendar of this month.
