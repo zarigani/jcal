@@ -1,6 +1,6 @@
 #!/usr/bin/ruby -W0
 # encoding: utf-8
-require_relative 'lib/jpdate'
+require 'jpdate'
 
 # JcalモジュールのためのStringクラスrefine拡張
 module JcalEx
