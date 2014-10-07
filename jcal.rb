@@ -2,6 +2,7 @@
 # encoding: utf-8
 require_relative 'lib/jpdate'
 
+# JcalモジュールのためのStringクラスrefine拡張
 module JcalEx
   refine String do
     def full_length() count("^ -~｡-ﾟ") end
@@ -23,6 +24,7 @@ module JcalEx
 end
 using JcalEx
 
+# カレンダーを描画する
 module Jcal
   WEEK_JA = %w(日 月 火 水 木 金 土)
 

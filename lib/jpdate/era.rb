@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'date'
 
-class JPDate < Date
+module JPDate
   module Era
     ERAS = [
       ['1868-10-23', '1912-07-30', '明治', :M],
@@ -13,15 +13,16 @@ class JPDate < Date
     module_function
 
     # 和暦の元号と年を返す
-    # JPDate::Era.name_year(2014)                       # => ["平成26年"]
-    # JPDate::Era.name_year(1926)                       # => ["大正15年", "昭和元年"]
-    # JPDate::Era.name_year(1926, 11)                   # => ["大正15年"]
-    # JPDate::Era.name_year(1926, 12)                   # => ["大正15年", "昭和元年"]
-    # JPDate::Era.name_year(1926, 12, 24)               # => ["大正15年"]
-    # JPDate::Era.name_year(1926, 12, 25)               # => ["大正15年", "昭和元年"]
-    # JPDate::Era.name_year(1926, 12, 26)               # => ["昭和元年"]
-    # JPDate::Era.name_year(1926, 12, 26, human: false) # => ["昭和1年"]
-    # JPDate::Era.name_year(1927, format: '%s%02d年')   # => ["昭和02年"]
+    # ===Example:
+    #   JPDate::Era.name_year(2014)                       # => ["平成26年"]
+    #   JPDate::Era.name_year(1926)                       # => ["大正15年", "昭和元年"]
+    #   JPDate::Era.name_year(1926, 11)                   # => ["大正15年"]
+    #   JPDate::Era.name_year(1926, 12)                   # => ["大正15年", "昭和元年"]
+    #   JPDate::Era.name_year(1926, 12, 24)               # => ["大正15年"]
+    #   JPDate::Era.name_year(1926, 12, 25)               # => ["大正15年", "昭和元年"]
+    #   JPDate::Era.name_year(1926, 12, 26)               # => ["昭和元年"]
+    #   JPDate::Era.name_year(1926, 12, 26, human: false) # => ["昭和1年"]
+    #   JPDate::Era.name_year(1927, format: '%s%02d年')   # => ["昭和02年"]
     def name_year(y, m=nil, d=nil, format: '%s%d年', human: true, short: false)
       dates = [Date.new(y, m ||  1, d ||  1), Date.new(y, m || -1, d || -1)]
       eras = ERAS.select do |era_s, era_e|
@@ -35,8 +36,9 @@ class JPDate < Date
     end
 
     # 和暦のアルファベットの元号と年を返す
-    # JPDate::Era.short_name_year(2014)                 # => ["H26"]
-    # JPDate::Era.short_name_year(1926)                 # => ["T15", "S01"]
+    # ===Example:
+    #   JPDate::Era.short_name_year(2014)                 # => ["H26"]
+    #   JPDate::Era.short_name_year(1926)                 # => ["T15", "S01"]
     def short_name_year(y, m=nil, d=nil)
       name_year(y, m, d, format: '%s%02d', human: false, short: true)
     end
