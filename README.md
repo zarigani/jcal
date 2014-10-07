@@ -1,8 +1,8 @@
-jcalコマンド
-=============
+#jcalコマンド & JPDateクラス
 
-* 日本の祝日もちゃんと表示するカレンダー出力コマンド。
-* 以下の法律に準拠。
+* jcal  : 日本の祝日もちゃんと表示するカレンダー出力コマンド。
+* JPDate: 祝日名称と年号を返すクラス＆モジュール。
+* 以下の法律に準拠
   * 太政官布告 五節ヲ廃シ祝日ヲ定ム
   * 太政官布告 年中祭日祝日ノ休暇日ヲ定ム
   * 勅令 休日ニ關スル件
@@ -10,10 +10,9 @@ jcalコマンド
 
 * 明治6年・1973年から2099年までのカレンダーに対応。（将来のカレンダーには現行の法律を適用）
   * 日本の暦は、明治6年・1973年1月1日より太陽暦で動いている。（それ以前は太陰暦）
-  * このコマンドは、太陽暦以降の祝日に関する法律に可能な限り準拠しようとしている。
+  * jcal・JPDateは、太陽暦以降の祝日に関する法律に可能な限り準拠しようとしている。
 
-Install
--------
+##Installation
 
     $ git clone https://github.com/zarigani/jcal
     $ cd jcal
@@ -21,14 +20,14 @@ Install
 
 または、
 
-    Click "Download ZIP" button in the GitHub(https://github.com/zarigani/jcal).
-
+    # Click "Download ZIP" button in the GitHub(https://github.com/zarigani/jcal).
+    
     $ unzip jcal-master.zip
     $ cd jcal-master
     $ sudo gem install jpdate
 
-Usage
------
+##Usage(jcal)
+
     Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]
 
         -y[NUM]                          List NUM years.(0-10)
@@ -46,3 +45,55 @@ Usage
         jcal -m                        # Show monthly calendar from last month to next month.
         jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.
         jcal 2010 2 8                  # Show monthly calendar from Feb.2010 to Aug.2010.
+
+##Usage(JPDate, JPDate::Holiday, JPDate::Era)
+
+    require 'jpdate'
+    
+    JPDate.new(2014, 9 ,23).holiday
+    => "秋分の日"
+    
+    JPDate.new(2014, 9 ,24).holiday
+    => nil
+
+    JPDate::Holiday.list(2014..2015)
+    => {#<Date: 2014-01-01 ((2456659j,0s,0n),+0s,2299161j)>=>"元旦",
+        #<Date: 2014-01-13 ((2456671j,0s,0n),+0s,2299161j)>=>"成人の日",
+        #<Date: 2014-02-11 ((2456700j,0s,0n),+0s,2299161j)>=>"建国記念日",
+        #<Date: 2014-03-21 ((2456738j,0s,0n),+0s,2299161j)>=>"春分の日"
+            ...中略...
+        #<Date: 2015-11-03 ((2457330j,0s,0n),+0s,2299161j)>=>"文化の日",
+        #<Date: 2015-11-23 ((2457350j,0s,0n),+0s,2299161j)>=>"勤労感謝の日",
+        #<Date: 2015-12-23 ((2457380j,0s,0n),+0s,2299161j)>=>"天皇誕生日"}
+    
+    JPDate::Era.name_year(1989)
+    => ["昭和64年", "平成元年"]
+    
+    JPDate::Era.name_year(1989, 1)
+    => ["昭和64年", "平成元年"]
+    
+    JPDate::Era.name_year(1989, 2)
+    => ["平成元年"]
+    
+    JPDate::Era.name_year(1989, 1, 7)
+    => ["昭和64年"]
+    
+    JPDate::Era.name_year(1989, 1, 8)
+    => ["平成元年"]
+    
+    JPDate::Era.short_name_year(1989)
+    => ["S64", "H01"]
+
+##More Document
+
+###gemサーバーを起動する方法
+    $ gem server
+
+* gemサーバー起動後、以下のURLを開く。
+* http://0.0.0.0:8808/doc_root/jpdate-0.1/
+
+###Rdocを生成する方法
+
+    $ cd ~/Desktop
+    $ rdoc $(dirname `gem which jpdate`)
+    $ open doc/index.html
