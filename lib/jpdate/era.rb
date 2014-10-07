@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'date'
 
-module JPDate
+class JPDate < Date
   module Era
     ERAS = [
       ['1868-10-23', '1912-07-30', '明治', :M],

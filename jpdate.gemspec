@@ -5,7 +5,7 @@ require 'jpdate/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "jpdate"
-  spec.version       = Jpdate::VERSION
+  spec.version       = JPDate::VERSION
   spec.authors       = ["zariganitosh"]
   spec.email         = ["XXXX@example.com"]
   spec.summary       = %q{日本の祝日を出力するJPDateクラス}
