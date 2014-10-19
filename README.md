@@ -8,22 +8,12 @@
   * 勅令 休日ニ關スル件
   * 法律 国民の祝日に関する法律
 
-* 明治6年・1973年から2099年までのカレンダーに対応。（将来のカレンダーには現行の法律を適用）
-  * 日本の暦は、明治6年・1973年1月1日より太陽暦で動いている。（それ以前は太陰暦）
+* 明治6年・1873年から2099年までのカレンダーに対応。（将来のカレンダーには現行の法律を適用）
+  * 日本の暦は、明治6年・1873年1月1日より太陽暦で動いている。（それ以前は太陰暦）
   * jcal・JPDateは、太陽暦以降の祝日に関する法律に可能な限り準拠しようとしている。
 
 ##Installation
 
-    $ git clone https://github.com/zarigani/jcal
-    $ cd jcal
-    $ sudo gem install jpdate
-
-または、
-
-    # Click "Download ZIP" button in the GitHub(https://github.com/zarigani/jcal).
-    
-    $ unzip jcal-master.zip
-    $ cd jcal-master
     $ sudo gem install jpdate
 
 ##Usage(jcal)
@@ -87,7 +77,7 @@
 ##More Document
 
 ###gemサーバーを起動する方法
-    $ gem server
+    $ gem server -l
 
 * gemサーバー起動後、以下のURLを開く。
 * http://0.0.0.0:8808/doc_root/jpdate-0.1/
