@@ -12,11 +12,11 @@
   * 日本の暦は、明治6年・1873年1月1日より太陽暦で動いている。（それ以前は太陰暦）
   * jcal・JPDateは、太陽暦以降の祝日に関する法律に可能な限り準拠しようとしている。
 
-##Installation
+##Installation インストール
 
     $ sudo gem install jpdate
 
-##Usage(jcal)
+##Usage 使い方(jcal)
 
     Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]
 
@@ -36,7 +36,7 @@
         jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.
         jcal 2010 2 8                  # Show monthly calendar from Feb.2010 to Aug.2010.
 
-##Usage(JPDate, JPDate::Holiday, JPDate::Era)
+##Usage 使い方(JPDate, JPDate::Holiday, JPDate::Era)
 
     require 'jpdate'
     
@@ -74,7 +74,7 @@
     JPDate::Era.short_name_year(1989)
     => ["S64", "H01"]
 
-##More Document
+##More Document さらなるドキュメント
 
 ###gemサーバーを起動する方法
     $ gem server -l
@@ -87,3 +87,11 @@
     $ cd ~/Desktop
     $ rdoc $(dirname `gem which jpdate`)
     $ open doc/index.html
+
+##Contributing 貢献
+
+1. フォークする。 ( https://github.com/[my-github-username]/sample/fork )
+2. フィーチャーブランチを作る。 (`git checkout -b my-new-feature`)
+3. 変更をコミットする。 (`git commit -am 'Add some feature'`)
+4. フィーチャーブランチにプッシュする。 (`git push origin my-new-feature`)
+5. プルリクエストを作る。
