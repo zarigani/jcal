@@ -133,7 +133,7 @@ class JPDate < Date
     #   JPDate::Holiday.list(2015) # => {#<Date: 2015-01-01 ((2457024j,0s,0n),+0s,2299161j)>=>"元旦", #<Date: 2015-01-12 ((2457035j,0s,0n),+0s,2299161j)>=>"成人の日", #<Date: 2015-02-11 ((2457065j,0s,0n),+0s,2299161j)>=>"建国記念日", #<Date: 2015-03-21 ((2457103j,0s,0n),+0s,2299161j)>=>"春分の日", #<Date: 2015-04-29 ((2457142j,0s,0n),+0s,2299161j)>=>"昭和の日", #<Date: 2015-05-03 ((2457146j,0s,0n),+0s,2299161j)>=>"憲法記念日", #<Date: 2015-05-04 ((2457147j,0s,0n),+0s,2299161j)>=>"みどりの日", #<Date: 2015-05-05 ((2457148j,0s,0n),+0s,2299161j)>=>"こどもの日", #<Date: 2015-05-06 ((2457149j,0s,0n),+0s,2299161j)>=>"振替休日", #<Date: 2015-07-20 ((2457224j,0s,0n),+0s,2299161j)>=>"海の日", #<Date: 2015-09-21 ((2457287j,0s,0n),+0s,2299161j)>=>"敬老の日", #<Date: 2015-09-22 ((2457288j,0s,0n),+0s,2299161j)>=>"国民の休日", #<Date: 2015-09-23 ((2457289j,0s,0n),+0s,2299161j)>=>"秋分の日", #<Date: 2015-10-12 ((2457308j,0s,0n),+0s,2299161j)>=>"体育の日", #<Date: 2015-11-03 ((2457330j,0s,0n),+0s,2299161j)>=>"文化の日", #<Date: 2015-11-23 ((2457350j,0s,0n),+0s,2299161j)>=>"勤労感謝の日", #<Date: 2015-12-23 ((2457380j,0s,0n),+0s,2299161j)>=>"天皇誕生日"}
     #   JPDate::Holiday.list(1989..2014) # => ...中略...
     def self.list(range)
-      range = range..range if range.class == Fixnum
+      range = range..range if range.class == Integer
       range.each {|y| new(y) unless @@years.include?(y)}
       Hash[@@holidays.sort].select {|k, v| range.include?(k.year)}
     end
@@ -144,7 +144,7 @@ class JPDate < Date
       @holidays = {}
       HOLIDAYS.select {|h| h[:term].include?(y)}.each do |h|
         date = case h[:day]
-               when Fixnum then Date.new(y, h[:month], h[:day])
+               when Integer then Date.new(y, h[:month], h[:day])
                when String then send(*h[:day].split, y, h[:month])
                end
         @holidays[date] = h[:name]
