@@ -68,6 +68,8 @@ class JPDate < Date
       # 平成13年 2001年 6月22日公布・平成15年 2003年1月1日施行 法律第 59号 国民の祝日に関する法律(改正)
       # 平成17年 2005年 5月20日公布・平成19年 2007年1月1日施行 法律第 43号 国民の祝日に関する法律(改正)
       # 平成26年 2014年 5月30日公布・平成28年 2016年1月1日施行 法律第 43号 国民の祝日に関する法律(改正)
+      # 平成30年 2018年 6月20日公布・平成30年 2018年6月20日施行 法律第 55号 国民の祝日に関する法律(改正)
+      # 平成30年 2018年 6月20日公布・平成32年 2020年1月1日施行 法律第 57号 国民の祝日に関する法律(改正)
       {month:1,  day:1,           term:1949..9999, name:'元旦'},
       {month:1,  day:15,          term:1949..1999, name:'成人の日'},
       {month:1,  day:'monday 2',  term:2000..9999, name:'成人の日'},
@@ -80,13 +82,19 @@ class JPDate < Date
       {month:5,  day:4 ,          term:2007..9999, name:'みどりの日'},
       {month:5,  day:5 ,          term:1949..9999, name:'こどもの日'},
       {month:7,  day:20,          term:1996..2002, name:'海の日'},
-      {month:7,  day:'monday 3',  term:2003..9999, name:'海の日'},
-      {month:8,  day:11,          term:2016..9999, name:'山の日'},
+      {month:7,  day:'monday 3',  term:2003..2019, name:'海の日'},
+      {month:7,  day:23,          term:2020..2020, name:'海の日'},
+      {month:7,  day:'monday 3',  term:2021..9999, name:'海の日'},
+      {month:8,  day:11,          term:2016..2019, name:'山の日'},
+      {month:8,  day:10,          term:2020..2020, name:'山の日'},
+      {month:8,  day:11,          term:2021..9999, name:'山の日'},
       {month:9,  day:15,          term:1966..2002, name:'敬老の日'},
       {month:9,  day:'monday 3',  term:2003..9999, name:'敬老の日'},
       {month:9,  day:'autumn_day',term:1948..2099, name:'秋分の日'},
       {month:10, day:10,          term:1966..1999, name:'体育の日'},
-      {month:10, day:'monday 2',  term:2000..9999, name:'体育の日'},
+      {month:10, day:'monday 2',  term:2000..2019, name:'体育の日'},
+      {month:7,  day:24,         term:2020..2020, name:'スポーツの日'},
+      {month:10, day:'monday 2',  term:2021..9999, name:'スポーツの日'},
       {month:11, day:3,           term:1948..9999, name:'文化の日'},
       {month:11, day:23,          term:1948..9999, name:'勤労感謝の日'},
       {month:12, day:23,          term:1989..9999, name:'天皇誕生日'},
