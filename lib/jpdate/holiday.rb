@@ -76,7 +76,7 @@ class JPDate < Date
       {month:1,  day:15,          term:1949..1999, name:'成人の日'},
       {month:1,  day:'monday 2',  term:2000..9999, name:'成人の日'},
       {month:2,  day:11,          term:1967..9999, name:'建国記念日'},
-      {month:2,  day:23,          term:2019..9999, name:'天皇誕生日'},
+      {month:2,  day:23,          term:2020..9999, name:'天皇誕生日'},
       {month:3,  day:'spring_day',term:1949..2099, name:'春分の日'},
       {month:4,  day:29,          term:1949..1988, name:'天皇誕生日'},
       {month:4,  day:29,          term:1989..2006, name:'みどりの日'},
