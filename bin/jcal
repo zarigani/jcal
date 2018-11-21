@@ -41,15 +41,16 @@ module Jcal
     end_date   = JPDate.new(y, m, -1) + (6 - JPDate.new(y, m, -1).wday)
     (start_date..end_date).each_slice(7) do |week|
       week.each do |date|
-        today_marker = date == Date.today ? "\e[7m" : ''
+        today_marker = date.month == m && date == Date.today ? "\e[7m" : ''
+        month_marker = date.month != m ? "\e[2m" : ''
         holiday_name = date.holiday.to_s.rjust_ja(14)
         fgcolor      = case
-                       when date.month != m                 then 37
+                       when date.month != m                 then  0
                        when date.wday  == 0, date.holiday   then 31
                        when date.wday  == 6                 then 36
                        else                                       0
                        end
-        printf "\e[%dm%s%s%2d\e[0m", fgcolor, holiday_name, today_marker, date.day
+        printf "\e[%dm%s%s%s%2d\e[0m", fgcolor, month_marker, holiday_name, today_marker, date.day
       end
       puts
     end
