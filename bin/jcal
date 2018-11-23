@@ -101,7 +101,7 @@ options = {}
 OptionParser.new do |opt|
   opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]'
   opt.separator('')
-  opt.on('-y[NUM]', 'List NUM years.(0-10)') {|v| options[:years] = v.to_i}
+  opt.on('-y[NUM]', 'Show NUM years.(0-10)') {|v| options[:years] = v.to_i}
   opt.on('-m[NUM]', 'Show NUM months.') {|v| options[:months] = v.to_i}
   opt.on('-e'     , 'List with the name of Japanese era.') {|v| options[:era] = v}
   opt.separator('')
@@ -116,6 +116,7 @@ OptionParser.new do |opt|
          '    jcal -m                        # Show monthly calendar from last month to next month.',
          '    jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.',
          '    jcal 2010 2 8                  # Show monthly calendar from Feb.2010 to Aug.2010.',
+         '    jcal --version=JPDate          # Show version of JPDate.',
          )
   begin
     opt.parse!(ARGV)
@@ -138,7 +139,6 @@ m = [m[0]    , m[0] + options[:months] - 1]   if options.key?(:months) && option
 (y[0] = options[:years]; options[:years] = 0) if options.key?(:years) && options[:years] >= 1900  # -y西暦なら、西暦と解釈
 m = [1, 12]                                   if options.key?(:years) && options[:years] <= 1     # -y指定期間が1年以下は、12カ月分表示
 options[:years] ||= (y[1] - y[0]).abs + 1     if y.size == 2 && (options.empty? || options[:era]) # 西暦2個・月0個・オプションなしは、-yに期間を追加
-
 if options.key?(:years) && options[:years] >= 2
   Jcal::list(y.min, options[:years], options[:era])
 else
