@@ -31,6 +31,7 @@ module Jcal
   module_function
 
   def render_matrix(y, m)
+    m = 12 if m == 0
     title = (sprintf("#{JPDate::Era.name_year(y, m).join('／')} %4d年 %2d月", y, m)).center_ja(16 * 7)
     week_names = WEEK_JA.map {|s| s.rjust_ja(16)}
     week_names[0] = "\e[31m#{week_names[0]}\e[0m"
@@ -81,13 +82,9 @@ module Jcal
   end
 
   def matrix(base_year, start_month, end_month=start_month)
-    base_year -= 1 if start_month <= 0
-    start_month, end_month = *[start_month, end_month].map {|i| i %= 12; i == 0 ? 12 : i}
-    if start_month <= end_month
-      (start_month..end_month).each {|i| render_matrix(base_year    , i)}
-    else
-      (start_month..12       ).each {|i| render_matrix(base_year    , i)}
-      (          1..end_month).each {|i| render_matrix(base_year + 1, i)}
+    end_month += 12 if start_month > end_month
+    (start_month..end_month).each do |i|
+      render_matrix(base_year + (i / 12.0).ceil - 1, i % 12)
     end
   end
 
@@ -105,7 +102,7 @@ OptionParser.new do |opt|
   opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]'
   opt.separator('')
   opt.on('-y[NUM]', 'List NUM years.(0-10)') {|v| options[:years] = v.to_i}
-  opt.on('-m[NUM]', 'Show NUM months.(0-12)') {|v| options[:months] = v.to_i}
+  opt.on('-m[NUM]', 'Show NUM months.') {|v| options[:months] = v.to_i}
   opt.on('-e'     , 'List with the name of Japanese era.') {|v| options[:era] = v}
   opt.separator('')
   opt.on('Example:',
