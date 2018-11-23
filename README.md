@@ -20,8 +20,8 @@
 
     Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]
 
-        -y[NUM]                          List NUM years.(0-10)
-        -m[NUM]                          Show NUM months.(0-12)
+        -y[NUM]                          Show NUM years.(0-10)
+        -m[NUM]                          Show NUM months.
         -e                               List with the name of Japanese era.
 
     Example:
@@ -35,6 +35,7 @@
         jcal -m                        # Show monthly calendar from last month to next month.
         jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.
         jcal 2010 2 8                  # Show monthly calendar from Feb.2010 to Aug.2010.
+        jcal --version=JPDate          # Show version of JPDate.
 
 ##Usage 使い方(JPDate, JPDate::Holiday, JPDate::Era)
 
