@@ -99,6 +99,7 @@ require 'optparse'
 # オプション解析
 options = {}
 OptionParser.new do |opt|
+  opt.version = JPDate::VERSION
   opt.banner = 'Usage: jcal [options] [yyyy|mm] [yyyy|mm] [yyyy|mm]'
   opt.separator('')
   opt.on('-y[NUM]', 'Show NUM years.(0-10)') {|v| options[:years] = v.to_i}
