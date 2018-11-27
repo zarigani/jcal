@@ -35,7 +35,6 @@
         jcal -m                        # Show monthly calendar from last month to next month.
         jcal -m6 2010 1                # Show monthly calendar from Jan.2010 to Jun.2010.
         jcal 2010 2 8                  # Show monthly calendar from Feb.2010 to Aug.2010.
-        jcal --version=JPDate          # Show version of JPDate.
 
 ##Usage 使い方(JPDate, JPDate::Holiday, JPDate::Era)
 
