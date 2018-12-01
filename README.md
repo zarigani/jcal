@@ -23,6 +23,7 @@
         -y[NUM]                          Show NUM years.(0-10)
         -m[NUM]                          Show NUM months.
         -e                               List with the name of Japanese era.
+        -s, --size=compact|minimum       Set width of monthly calendar.
 
     Example:
         jcal                           # Show monthly calendar of this month.
